@@ -1,7 +1,7 @@
 package Server;
 
 
-public class main
+public class Main
 {
 
 	/**

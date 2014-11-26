@@ -1,7 +1,7 @@
 package Client;
 
 
-public class main
+public class Main
 {
 
 	/**
