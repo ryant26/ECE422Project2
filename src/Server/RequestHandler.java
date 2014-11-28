@@ -3,7 +3,9 @@ package Server;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
 import java.net.Socket;
+import java.util.Arrays;
 import java.util.List;
 
 import common.Encryption;
@@ -28,11 +30,13 @@ public class RequestHandler implements Runnable
 	}
 	
 	private List<String> parseRequest(String input){
-		return input.split(" ");
+		return Arrays.asList(input.split(""));
 	}
 	
 	private String read() throws SocketReadException{
 		try{
+			ObjectInputStream is = new ObjectInputStream(socket.getInputStream());
+			is.
 			BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			return reader.readLine();
 		} catch (IOException e){
