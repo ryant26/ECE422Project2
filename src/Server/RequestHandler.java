@@ -1,9 +1,13 @@
 package Server;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.Socket;
 import java.util.List;
 
 import common.Encryption;
+import common.SocketReadException;
 
 
 public class RequestHandler implements Runnable
@@ -23,11 +27,18 @@ public class RequestHandler implements Runnable
 		
 	}
 	
-	private List<String> parseRequest(){
-		return null;
+	private List<String> parseRequest(String input){
+		return input.split(" ");
 	}
 	
-	private void read(){}
+	private String read() throws SocketReadException{
+		try{
+			BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			return reader.readLine();
+		} catch (IOException e){
+			throw new SocketReadException();
+		} 
+	}
 	private void sendForbidden(){}
 	private void sendFileNotFound(){}
 	private void sendOK(){}
