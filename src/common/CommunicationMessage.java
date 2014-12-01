@@ -8,12 +8,14 @@ public class CommunicationMessage implements Serializable{
 	public Status status;
 	public int ID;
 	public String data;
+	public long filesize;
 	
 	public CommunicationMessage(){};
-	public CommunicationMessage(Status stat, int id, String data){
+	public CommunicationMessage(Status stat, int id, String data, long filesize){
 		status = stat;
 		ID = id;
 		this.data = data;
+		this.filesize = filesize;
 	}
 
 }

@@ -3,14 +3,26 @@ package common;
 
 public class Encryption
 {
-	private long plainText;
-	private long cipherText;
-	
-	public long encrypt(long text){
-		return 0;
+	static{
+		//System.loadLibrary("cencryption");
+		System.load("/home/cmput296/Desktop/ECE422/Proj2/src/libcencryption.so");
 	}
 	
-	public long decrypt(long text){
-		return 1;
+	private long [] plainText;
+	private long [] cipherText;
+	
+	private native void decrypt(long [] cipher, long [] key);
+	private native void encrypt(long [] plain, long [] key);
+	
+	public void encryption (long [] plainText, long [] key){
+		this.plainText = plainText;
+		encrypt(plainText, key);
+		cipherText = this.plainText;
+	}
+	
+	public void decryption(long [] cipherText, long [] key){
+		this.cipherText = cipherText;
+		decrypt(cipherText, key);
+		this.plainText = cipherText;
 	}
 }
