@@ -5,5 +5,6 @@ public enum Status {
 	PermissionDenied,
 	Authenticate,
 	FileRequest,
-	FileNotFound
+	FileNotFound,
+	EOF
 }

@@ -20,10 +20,7 @@ public class UserInterface
 		System.out.println("Welcome to Ryan's File Transfer, type exit at any time to quit!");
 		authenticateLoop();
 		
-		while (authenticated){
-			
-			
-		}
+		fileTransferLoop();
 	}
 	
 	private void checkExit(String input){
@@ -60,14 +57,20 @@ public class UserInterface
 	}
 	
 	private void fileTransferLoop(){
-		while (authenticated) {
+		while (authenticated && !exit) {
 			System.out.println("Enter a filename to transfer");
 			String filename = scanner.nextLine();
 			
 			checkExit(filename);
 			if (exit)return;
-			
-			
+			try {
+				backing.requestFile(inputID, filename);
+			} catch (Exception e){
+				System.out.println("Error getting file");
+				continue;
+			}
 		}
 	}
+	
+	
 }
