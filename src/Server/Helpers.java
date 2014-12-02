@@ -7,7 +7,7 @@ import java.nio.file.AccessDeniedException;
 
 
 public class Helpers {
-	private static final String rootDIR = "www/"; 
+	public static final String rootDIR = "www/"; 
 	
 	public static String buildFilePathString(String filename){
 		return rootDIR + filename;

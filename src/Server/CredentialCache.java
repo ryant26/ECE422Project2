@@ -1,11 +1,12 @@
 package Server;
 
 import java.util.HashMap;
+import java.util.Random;
 
 
 public class CredentialCache
 {
-	private HashMap<Integer, long[]> cache;
+	public HashMap<Integer, long[]> cache;
 	
 	public CredentialCache(){
 		cache = new HashMap<Integer, long[]>();
@@ -21,5 +22,10 @@ public class CredentialCache
 		return cache.get(ID);
 	}
 	
+	public long[] getRandomKey(){
+		Random rand = new Random();
+		return new long [] {rand.nextLong(), rand.nextLong(),
+				rand.nextLong(), rand.nextLong()};
+	}
 	
 }

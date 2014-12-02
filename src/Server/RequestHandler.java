@@ -20,10 +20,9 @@ import common.Status;
 
 public class RequestHandler implements Runnable
 {
-	private Socket socket;
-	private Encryption encryption = new Encryption();
-	private CredentialCache cache = new CredentialCache();
-	private CommunicationHandler comm;
+	public Socket socket;
+	public CommunicationHandler comm;
+	public int ID = 0;
 	
 	public RequestHandler(Socket socket){
 		this.socket = socket;
@@ -37,36 +36,37 @@ public class RequestHandler implements Runnable
 		
 	}
 	
-	private CommunicationMessage read() throws SocketReadException{
-		try{		
-			return comm.receiveCommunication();
+	public CommunicationMessage read() throws SocketReadException{
+		try{
+			//****************REMOVE THIS ARGUMENT//////////
+			return comm.receiveCommunication(new long [1]);
 		} catch (Exception e){
 			throw new SocketReadException();
 		} 
 	}
-	private void sendForbidden(){
+	public void sendForbidden(){
 		try {
 			comm.sendCommunication(new CommunicationMessage(Status.PermissionDenied, 0, null, 0));
 		} catch (Exception e) {}
 	}
-	private void sendFileNotFound(){
+	public void sendFileNotFound(){
 		try {
 			comm.sendCommunication(new CommunicationMessage(Status.FileNotFound, 0, null, 0));
 		} catch (Exception e) {}
 	}
-	private void sendOK(){
+	public void sendOK(){
 		try {
 			comm.sendCommunication(new CommunicationMessage(Status.OK, 0, null, 0));
 		} catch (Exception e) {}
 	}
 	
-	private void sendFileOK(long filesize){
+	public void sendFileOK(long filesize){
 		try {
 			comm.sendCommunication(new CommunicationMessage(Status.OK, 0, null, filesize));
 		} catch (Exception e) {}
 	}
 	
-	private void sendFile(String filename){
+	public void sendFile(String filename){
 		try{
 			FileOutputStream os = findFile(filename);
 			sendFileOK(getFileSize(filename));
@@ -81,7 +81,7 @@ public class RequestHandler implements Runnable
 		}
 	};
 	
-	private FileOutputStream findFile(String filename) throws IOException, AccessDeniedException{
+	public FileOutputStream findFile(String filename) throws IOException, AccessDeniedException{
 		String RequestedFileName = Helpers.buildFilePathString(filename);
 		
 		if (Helpers.validateFile(filename)){
@@ -91,7 +91,7 @@ public class RequestHandler implements Runnable
 		}
 	}
 	
-	private long getFileSize(String filename) throws AccessDeniedException, IOException{
+	public long getFileSize(String filename) throws AccessDeniedException, IOException{
 		File req = null;
 		if (Helpers.validateFile(filename)){
 			req = new File(Helpers.buildFilePathString(filename));
@@ -100,7 +100,9 @@ public class RequestHandler implements Runnable
 		return req.length();
 	}
 	
-	private boolean authenticate(int ID){
+	public Boolean authenticate(){
+		//This will  be where we cycle through all keys to get an ID
 		return true;
 	}
+
 }

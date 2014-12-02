@@ -7,8 +7,8 @@ import java.util.concurrent.Executors;
 
 public class ServerMain
 {
-	private static final Integer port = 16000;
-	private ServerSocket socket;
+	public static final Integer port = 16000;
+	public ServerSocket socket;
 	
 	public void start (){
 		try{
@@ -21,7 +21,7 @@ public class ServerMain
 		}
 	}
 	
-	private void initialize(){
+	public void initialize(){
 		try
 		{
 			socket = new ServerSocket(port);
@@ -35,7 +35,7 @@ public class ServerMain
 		
 	}
 	
-	private void listen(){
+	public void listen(){
 		try{
 			ExecutorService executor = Executors.newCachedThreadPool();
 			while(true){

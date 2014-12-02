@@ -37,7 +37,7 @@ JNIEXPORT void JNICALL Java_common_Encryption_encrypt(JNIEnv *env, jobject obj, 
 	long * k = (*env)->GetLongArrayElements(env, key, 0);
 
 	/* TEA encryption algorithm */
-	unsigned long y = v[2], z=v[3], sum = 0;
+	unsigned long y = v[0], z=v[1], sum = 0;
 	unsigned long delta = 0x9e3779b9, n=32;
 
 	while (n-- > 0){
@@ -46,8 +46,8 @@ JNIEXPORT void JNICALL Java_common_Encryption_encrypt(JNIEnv *env, jobject obj, 
 		z += (y<<4) + k[2] ^ y + sum ^ (y>>5) + k[3];
 	}
 
-	v[1] = y;
-	v[0] = z;
+	v[0] = y;
+	v[1] = z;
 	
 
 	(*env)->ReleaseLongArrayElements(env, text, v, 0);
