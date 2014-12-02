@@ -48,13 +48,13 @@ public class testEncryption {
 	@Test
 	public void testSendRecieve() throws  IOException, ObjectConstructionException{
 		CommunicationHandler client = new CommunicationHandler(new Socket());
-		
+		client.setID(1993);
 		
 		CommunicationMessage msg = new CommunicationMessage(Status.OK, 10, null, 20);
 		
 		long [] paddedEncrypted = client.sendCommunication(msg);
 		CommunicationMessage recieved = client.receiveCommunication(paddedEncrypted);
-		
+		assertEquals(msg.status, recieved.status);
 	}
 	
 	/*

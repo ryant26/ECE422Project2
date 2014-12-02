@@ -22,6 +22,7 @@ public class CommunicationHandler {
 	}
 	
 	public long [] sendCommunication(CommunicationMessage msg)throws IOException, ObjectConstructionException{
+		//TODO change to return void and use socket
 		byte [] msgArray;
 		try {
 			msgArray = toByteArray(msg);
@@ -49,6 +50,7 @@ public class CommunicationHandler {
 	}
 	
 	public CommunicationMessage receiveCommunication(long[] recievedMsg) throws ObjectConstructionException, IOException{
+		//TODO change to use socket and take no args
 		ArrayList<Long> read = new ArrayList<Long>();
 //		DataInputStream dis = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
 		
@@ -216,6 +218,10 @@ public class CommunicationHandler {
 		 	}
 		}
 		return longMsg;
+	}
+	
+	public void setID(int id){
+		this.ID = id;
 	}
 	
 }
