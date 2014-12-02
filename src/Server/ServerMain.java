@@ -13,6 +13,7 @@ public class ServerMain
 	public void start (){
 		try{
 			initialize();
+			System.out.println("Server Up and listening on 16000");
 			listen();
 			
 		}catch (Exception e){

@@ -17,8 +17,8 @@ classes:
 tests:lib
 	java $(LIB_PATH) -classpath "$(JUNIT_PATH):.:$(HAMCREST_PATH)" org.junit.runner.JUnitCore tests.testEncryption
 
-run:lib
-
+runServer:lib
+	java $(LIB_PATH) -classpath . Server.Main
 
 clean:
 	rm -rf *.class libcencryption.so

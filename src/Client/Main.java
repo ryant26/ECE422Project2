@@ -3,14 +3,17 @@ package Client;
 
 public class Main
 {
-
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args)
 	{
-
-		System.out.println("working");
+		try{
+			UserInterface ui = new UserInterface();
+			ui.run();
+			System.out.println("exiting goodbye");
+		} catch(Exception e) {
+			System.out.println("Could not connect to server! (Is it running?)");
+			return;
+		}
+		
 
 	}
 

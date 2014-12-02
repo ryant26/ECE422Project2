@@ -22,13 +22,34 @@ public class CommunicationHandler {
 	}
 	
 	public long [] sendCommunication(CommunicationMessage msg)throws IOException, ObjectConstructionException{
-		//TODO change to return void and use socket
 		byte [] msgArray;
 		try {
 			msgArray = toByteArray(msg);
 		} catch (Exception e){
 			throw  new ObjectConstructionException();
 		}
+		return sendRaw(msgArray);
+		
+	}
+	
+	public CommunicationMessage receiveCommunication(long[] recievedMsg) throws ObjectConstructionException, IOException{
+		long [] plain = recieveRaw(recievedMsg);
+		long [] plainNoHeader = Arrays.copyOfRange(plain, 1, plain.length);
+		long size = plain[0];
+		
+		byte [] commObj = Arrays.copyOf(LongArraytoByteArray(plainNoHeader), (int)size);
+		CommunicationMessage commMessage = null;
+		try {
+			commMessage = (CommunicationMessage) toObject(commObj);
+		} catch (Exception e){
+			throw new ObjectConstructionException();
+		}
+		
+		return commMessage;
+	}
+	
+	public long [] sendRaw(byte [] msgArray){
+		//TODO change to return void and use socket
 		long msgLength = msgArray.length;
 		byte [] lenArray = ByteBuffer.allocate(8).putLong(msgLength).array();
 		byte [] sendMsg = new byte [msgArray.length + lenArray.length];
@@ -45,42 +66,29 @@ public class CommunicationHandler {
 //		for (long l : encryptedMessag){
 //			dos.writeLong(l);
 //		}
-		
-		
 	}
 	
-	public CommunicationMessage receiveCommunication(long[] recievedMsg) throws ObjectConstructionException, IOException{
+	public long [] recieveRaw(long [] recievedMsg){
 		//TODO change to use socket and take no args
-		ArrayList<Long> read = new ArrayList<Long>();
-//		DataInputStream dis = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
-		
-//		while (dis.available() > 0){
-//			read.add(dis.readLong());
-//		}
-		
-		for (int i=0; i<recievedMsg.length; i++){
-			read.add(recievedMsg[i]);
-		}
-		
-		
-		long [] encrypted = new long [read.size()];
-		for (int i = 0; i < encrypted.length; i++){
-			encrypted[i] = read.get(i);
-		}
-		
-		long [] plain = decryptMsg(encrypted, this.ID);
-		long [] plainNoHeader = Arrays.copyOfRange(plain, 1, plain.length);
-		long size = plain[0];
-		
-		byte [] commObj = Arrays.copyOf(LongArraytoByteArray(plainNoHeader), (int)size);
-		CommunicationMessage commMessage = null;
-		try {
-			commMessage = (CommunicationMessage) toObject(commObj);
-		} catch (Exception e){
-			throw new ObjectConstructionException();
-		}
-		
-		return commMessage;
+				ArrayList<Long> read = new ArrayList<Long>();
+//				DataInputStream dis = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
+				
+//				while (dis.available() > 0){
+//					read.add(dis.readLong());
+//				}
+				
+				for (int i=0; i<recievedMsg.length; i++){
+					read.add(recievedMsg[i]);
+				}
+				
+				
+				long [] encrypted = new long [read.size()];
+				for (int i = 0; i < encrypted.length; i++){
+					encrypted[i] = read.get(i);
+				}
+				
+				long [] plain = decryptMsg(encrypted, this.ID);
+				return plain;
 	}
 	
 	private byte [] toByteArray(Object obj) throws Exception{
