@@ -26,6 +26,7 @@ public class UserInterface
 	private void checkExit(String input){
 		if (input.equalsIgnoreCase("exit")){
 			exit = true;
+			backing.closeConnection();
 		}
 	}
 	

@@ -43,7 +43,7 @@ public class CommunicationBacking
 	public void requestFile(int ID, String filename) throws IOException{
 		CommunicationMessage msg = new CommunicationMessage(Status.FQ, 0, filename, 0);
 		CommunicationMessage received = null;
-		
+		System.out.println();
 		try{
 			comm.sendCommunication(msg);
 		} catch (Exception e) {
@@ -57,6 +57,7 @@ public class CommunicationBacking
 				throw new IOException("Something went wrong while receiving file");
 			}
 		} while(received.status == Status.OK);
+		System.out.println();
 			
 		
 	}
@@ -66,10 +67,15 @@ public class CommunicationBacking
 			System.out.println(msg.data);
 		} else if (msg.status == Status.FNF){
 			System.out.println("File does not exist on server");
+			System.out.println();
 		} else if (msg.status == Status.PD){
 			System.out.println("You do not have permission to view this file");
+			System.out.println();
 		}
 	}
 	
+	public void closeConnection(){
+		comm.close();
+	}
 	
 }

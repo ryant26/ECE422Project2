@@ -277,4 +277,11 @@ public class CommunicationHandler {
 		this.ID = id;
 	}
 	
+	public void close(){
+		try{
+			socket.close();
+		} catch (Exception e){}
+		}
+	}
+	
 }
