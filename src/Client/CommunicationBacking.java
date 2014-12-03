@@ -10,7 +10,7 @@ import common.Status;
 
 public class CommunicationBacking
 {
-	private CommunicationHandler comm = new CommunicationHandler(new Socket("localhost", 16002));
+	private CommunicationHandler comm = new CommunicationHandler(new Socket("localhost", 16000));
 	
 	public CommunicationBacking() throws IOException {}
 	
