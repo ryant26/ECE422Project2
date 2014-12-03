@@ -2,9 +2,9 @@ package common;
 
 public enum Status {
 	OK,
-	PermissionDenied,
-	Authenticate,
-	FileRequest,
-	FileNotFound,
+	PD,
+	Auth,
+	FQ,
+	FNF,
 	EOF
 }

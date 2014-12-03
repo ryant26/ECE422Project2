@@ -5,8 +5,8 @@ public class Encryption
 {
 	static{
 		//TODO change to use loadLibrary
-		//System.loadLibrary("cencryption");
-		System.load("/home/ryant26/Desktop/ECE422/Proj2/src/libcencryption.so");
+		System.loadLibrary("cencryption");
+		//System.load("/home/ryant26/Desktop/ECE422/Proj2/src/libcencryption.so");
 	}
 	
 	public long [] plainText;

@@ -7,7 +7,7 @@ import java.nio.file.AccessDeniedException;
 
 
 public class Helpers {
-	public static final String rootDIR = "www/"; 
+	public static final String rootDIR = "./www/"; 
 	
 	public static String buildFilePathString(String filename){
 		return rootDIR + filename;
@@ -20,9 +20,12 @@ public class Helpers {
 		}
 		
 		File reqFile = new File(path);
-		
-		if (!reqFile.canRead()){
-			throw new AccessDeniedException(filename);
+		if (reqFile.exists()){
+			if (!reqFile.canRead()){
+				throw new AccessDeniedException(filename);
+			}
+		} else {
+			throw new IOException("Does not exist");
 		}
 		return true;
 	}

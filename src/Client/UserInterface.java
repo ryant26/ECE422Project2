@@ -59,7 +59,10 @@ public class UserInterface
 	private void fileTransferLoop(){
 		while (authenticated && !exit) {
 			System.out.println("Enter a filename to transfer");
-			String filename = scanner.nextLine();
+			String filename = "";
+			do{
+				filename = scanner.nextLine();
+			}while (filename.length() == 0);
 			
 			checkExit(filename);
 			if (exit)return;

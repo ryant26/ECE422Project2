@@ -2,6 +2,8 @@ package Server;
 
 import java.util.HashMap;
 import java.util.Random;
+import java.util.Set;
+import java.util.Map.Entry;
 
 
 public class CredentialCache
@@ -20,6 +22,11 @@ public class CredentialCache
 	
 	public long[] getEncryptionKey(Integer ID){
 		return cache.get(ID);
+		
+	}
+	
+	public Set<Integer> getIterableIDs(){
+		return cache.keySet();
 	}
 	
 	public long[] getRandomKey(){

@@ -7,13 +7,13 @@ import java.util.concurrent.Executors;
 
 public class ServerMain
 {
-	public static final Integer port = 16000;
+	public static final Integer port = 16002;
 	public ServerSocket socket;
 	
 	public void start (){
 		try{
 			initialize();
-			System.out.println("Server Up and listening on 16000");
+			System.out.println("Server Up and listening on 16002");
 			listen();
 			
 		}catch (Exception e){

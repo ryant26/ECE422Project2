@@ -44,7 +44,7 @@ public class testEncryption {
 		System.out.println(new String(decryptedBytes));
 		assertTrue(Arrays.equals(plainArray, decryptedBytes));
 	}
-	
+	/*
 	@Test
 	public void testSendRecieve() throws  IOException, ObjectConstructionException{
 		CommunicationHandler client = new CommunicationHandler(new Socket());
@@ -56,7 +56,7 @@ public class testEncryption {
 		CommunicationMessage recieved = client.receiveCommunication(paddedEncrypted);
 		assertEquals(msg.status, recieved.status);
 	}
-	
+	*/
 	/*
 	@Test
 	public void tommHandlerToByte() {

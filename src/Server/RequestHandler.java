@@ -2,7 +2,9 @@ package Server;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
@@ -11,9 +13,11 @@ import java.nio.file.AccessDeniedException;
 import java.util.Arrays;
 import java.util.List;
 
+import sun.org.mozilla.javascript.EcmaError;
 import common.CommunicationHandler;
 import common.CommunicationMessage;
 import common.Encryption;
+import common.ObjectConstructionException;
 import common.SocketReadException;
 import common.Status;
 
@@ -22,7 +26,8 @@ public class RequestHandler implements Runnable
 {
 	public Socket socket;
 	public CommunicationHandler comm;
-	public int ID = 0;
+	public int ID = -1;
+	public Boolean authenticated = false;
 	
 	public RequestHandler(Socket socket){
 		this.socket = socket;
@@ -32,26 +37,44 @@ public class RequestHandler implements Runnable
 	@Override
 	public void run()
 	{
-		// TODO Auto-generated method stub
-		
+		while(!socket.isClosed()){
+			if (!authenticated){
+				try {
+					System.out.println("authenticating");
+					authenticated = comm.authenticate();
+					sendOK();
+				} catch (Exception e){
+					closeConnection();
+					return;
+				}
+			} else {
+				try{
+					CommunicationMessage fileReq = read();
+					sendFile(fileReq.data);
+				} catch (SocketReadException e){
+					closeConnection();
+				} catch (ObjectConstructionException ee){
+					sendFileNotFound();
+				}
+			}
+		}
 	}
 	
-	public CommunicationMessage read() throws SocketReadException{
+	public CommunicationMessage read() throws SocketReadException, ObjectConstructionException{
 		try{
-			//****************REMOVE THIS ARGUMENT//////////
-			return comm.receiveCommunication(new long [1]);
-		} catch (Exception e){
+			return comm.receiveCommunication();
+		} catch (IOException e){
 			throw new SocketReadException();
-		} 
+		}
 	}
 	public void sendForbidden(){
 		try {
-			comm.sendCommunication(new CommunicationMessage(Status.PermissionDenied, 0, null, 0));
+			comm.sendCommunication(new CommunicationMessage(Status.PD, 0, null, 0));
 		} catch (Exception e) {}
 	}
 	public void sendFileNotFound(){
 		try {
-			comm.sendCommunication(new CommunicationMessage(Status.FileNotFound, 0, null, 0));
+			comm.sendCommunication(new CommunicationMessage(Status.FNF, 0, null, 0));
 		} catch (Exception e) {}
 	}
 	public void sendOK(){
@@ -68,8 +91,8 @@ public class RequestHandler implements Runnable
 	
 	public void sendFile(String filename){
 		try{
-			FileOutputStream os = findFile(filename);
-			sendFileOK(getFileSize(filename));
+			FileReader os = findFile(filename);
+			comm.sendFile(os);
 			
 			//TODO code the sending procedure
 		} catch (AccessDeniedException e){
@@ -81,11 +104,11 @@ public class RequestHandler implements Runnable
 		}
 	};
 	
-	public FileOutputStream findFile(String filename) throws IOException, AccessDeniedException{
+	public FileReader findFile(String filename) throws IOException, AccessDeniedException{
 		String RequestedFileName = Helpers.buildFilePathString(filename);
 		
 		if (Helpers.validateFile(filename)){
-			return new FileOutputStream(new File(RequestedFileName));
+			return new FileReader(new File(RequestedFileName));
 		} else {
 			return null;
 		}
@@ -100,9 +123,11 @@ public class RequestHandler implements Runnable
 		return req.length();
 	}
 	
-	public Boolean authenticate(){
-		//This will  be where we cycle through all keys to get an ID
-		return true;
+	private void closeConnection(){
+		try{
+			socket.close();
+		} catch (Exception ee){}
+		return;
 	}
 
 }

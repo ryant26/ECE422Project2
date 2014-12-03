@@ -20,5 +20,8 @@ tests:lib
 runServer:lib
 	java $(LIB_PATH) -classpath . Server.Main
 
+runClient:lib
+	java $(LIB_PATH) -classpath . Client.Main
+
 clean:
 	rm -rf *.class libcencryption.so

@@ -1,13 +1,12 @@
 package common;
 
-import java.awt.RadialGradientPaint;
 import java.io.*;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Map.Entry;
 
-import sun.security.util.Length;
 import Server.CredentialCache;
 
 public class CommunicationHandler {
@@ -21,19 +20,20 @@ public class CommunicationHandler {
 		this.socket = socket;
 	}
 	
-	public long [] sendCommunication(CommunicationMessage msg)throws IOException, ObjectConstructionException{
+	public void sendCommunication(CommunicationMessage msg)throws IOException, ObjectConstructionException{
 		byte [] msgArray;
 		try {
 			msgArray = toByteArray(msg);
+			
 		} catch (Exception e){
 			throw  new ObjectConstructionException();
 		}
-		return sendRaw(msgArray);
 		
+		sendRaw(msgArray);
 	}
 	
-	public CommunicationMessage receiveCommunication(long[] recievedMsg) throws ObjectConstructionException, IOException{
-		long [] plain = recieveRaw(recievedMsg);
+	public CommunicationMessage receiveCommunication() throws ObjectConstructionException, IOException{
+		long [] plain = recieveRaw();
 		long [] plainNoHeader = Arrays.copyOfRange(plain, 1, plain.length);
 		long size = plain[0];
 		
@@ -48,8 +48,8 @@ public class CommunicationHandler {
 		return commMessage;
 	}
 	
-	public long [] sendRaw(byte [] msgArray){
-		//TODO change to return void and use socket
+	public void sendRaw(byte [] msgArray) throws IOException{
+
 		long msgLength = msgArray.length;
 		byte [] lenArray = ByteBuffer.allocate(8).putLong(msgLength).array();
 		byte [] sendMsg = new byte [msgArray.length + lenArray.length];
@@ -61,31 +61,31 @@ public class CommunicationHandler {
 		}
 
 		long [] encryptedMessag  = encryptMsg(sendMsg, this.ID);
-		return encryptedMessag;
-//		DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
-//		for (long l : encryptedMessag){
-//			dos.writeLong(l);
-//		}
+
+		DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
+		for (long l : encryptedMessag){
+			dos.writeLong(l);
+		}
+		dos.flush();
 	}
 	
-	public long [] recieveRaw(long [] recievedMsg){
-		//TODO change to use socket and take no args
-				ArrayList<Long> read = new ArrayList<Long>();
-//				DataInputStream dis = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
-				
-//				while (dis.available() > 0){
-//					read.add(dis.readLong());
-//				}
-				
-				for (int i=0; i<recievedMsg.length; i++){
-					read.add(recievedMsg[i]);
-				}
-				
-				
-				long [] encrypted = new long [read.size()];
-				for (int i = 0; i < encrypted.length; i++){
-					encrypted[i] = read.get(i);
-				}
+	public long [] recieveRawEncrypted() throws IOException{
+		ArrayList<Long> read = new ArrayList<Long>();
+		DataInputStream dis = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
+
+		do{
+			read.add(dis.readLong());
+		}while (dis.available() > 0);
+		
+		long [] encrypted = new long [read.size()];
+		for (int i = 0; i < encrypted.length; i++){
+			encrypted[i] = read.get(i);
+		}
+		return encrypted;
+	}
+	
+	public long [] recieveRaw() throws IOException{
+				long [] encrypted = recieveRawEncrypted();
 				
 				long [] plain = decryptMsg(encrypted, this.ID);
 				return plain;
@@ -226,6 +226,51 @@ public class CommunicationHandler {
 		 	}
 		}
 		return longMsg;
+	}
+	
+	public Boolean authenticate() throws IOException{
+		long [] encrypted = recieveRawEncrypted();
+		
+		for (Integer ID : cache.getIterableIDs()){
+			try{
+				long [] plain = decryptMsg(encrypted, ID);
+				long [] plainNoHeader = Arrays.copyOfRange(plain, 1, plain.length);
+				Long size = plain[0];
+				if (size.intValue() > 0 && size.intValue() <= plainNoHeader.length * 8){
+					byte [] commObj = Arrays.copyOf(LongArraytoByteArray(plainNoHeader), size.intValue());
+					CommunicationMessage msg = (CommunicationMessage )toObject(commObj);
+					System.out.println("passed");
+					this.ID = msg.ID;
+					return true;
+				} else {
+					throw new Exception();
+				}
+			} catch (Exception e){
+				continue;
+			}
+		}
+		
+		return false;
+	}
+	
+	public void sendFile (FileReader file){
+		BufferedReader br = new BufferedReader(file);
+		String line;
+		try{
+			while((line = br.readLine()) != null){
+				CommunicationMessage msg = null;
+				if (!br.ready()){
+					msg = new CommunicationMessage(Status.EOF, this.ID, line, 0);
+				} else {
+					msg = new CommunicationMessage(Status.OK, this.ID, line, 0);
+				}
+				sendCommunication(msg);
+			}
+		} catch (IOException e){
+			System.out.println("Error sending file");
+		} catch (ObjectConstructionException ee){
+			System.out.println("Error building packet for file transfer");
+		}
 	}
 	
 	public void setID(int id){
