@@ -94,7 +94,6 @@ public class RequestHandler implements Runnable
 			FileReader os = findFile(filename);
 			comm.sendFile(os);
 			
-			//TODO code the sending procedure
 		} catch (AccessDeniedException e){
 			sendForbidden();
 		} catch (IOException e) {

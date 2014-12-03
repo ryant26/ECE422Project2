@@ -5,7 +5,6 @@ import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Map.Entry;
 
 import Server.CredentialCache;
 
@@ -164,7 +163,6 @@ public class CommunicationHandler {
 	
 	private byte [] padMessage(byte [] array){
 		byte [] padded = array;
-		//HERE BE CHANGE*************************
 		if (array.length % 8 != 0){
 			padded = new byte [array.length + (8-(array.length % 8))];
 			for (int i = 0; i < array.length; i++){
@@ -316,7 +314,6 @@ public class CommunicationHandler {
 			for (int i=0; i<otherPart.length; i++){
 				fullMsg[i+1] = otherPart[i];
 			}
-			//dis.close();
 			byte [] commObj = LongArraytoByteArray(fullMsg);
 			byte [] finalObj = Arrays.copyOf(commObj, (int)byteLen);;
 			return (CommunicationMessage)toObject(finalObj);

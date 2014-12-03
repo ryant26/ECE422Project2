@@ -1,12 +1,10 @@
 package Client;
 
-import java.io.IOError;
 import java.io.IOException;
 import java.net.Socket;
 
 import common.CommunicationHandler;
 import common.CommunicationMessage;
-import common.ObjectConstructionException;
 import common.Status;
 
 

@@ -2,7 +2,6 @@ package Client;
 
 import java.util.Scanner;
 
-import org.omg.CORBA.PRIVATE_MEMBER;
 
 
 public class UserInterface
