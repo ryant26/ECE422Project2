@@ -51,7 +51,7 @@ public class CommunicationBacking
 		}
 		do {
 			try{
-				received = comm.receiveCommunication();
+				received = comm.popCommunicationMessage();
 				handleReply(received);
 			} catch (Exception e){
 				throw new IOException("Something went wrong while receiving file");
@@ -65,12 +65,18 @@ public class CommunicationBacking
 	private void handleReply(CommunicationMessage msg){
 		if (msg.status == Status.OK || msg.status == Status.EOF){
 			System.out.println(msg.data);
+			if (msg.status == Status.EOF){
+				comm.clearDataBuffer();
+				System.out.println(" ==== END OF FILE ====");
+			}
 		} else if (msg.status == Status.FNF){
 			System.out.println("File does not exist on server");
 			System.out.println();
+			comm.clearDataBuffer();
 		} else if (msg.status == Status.PD){
 			System.out.println("You do not have permission to view this file");
 			System.out.println();
+			comm.clearDataBuffer();
 		}
 	}
 	

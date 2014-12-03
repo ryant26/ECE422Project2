@@ -15,6 +15,7 @@ public class CommunicationHandler {
 	private Encryption encryption = new Encryption();
 	private CredentialCache cache = new CredentialCache();
 	private int ID =  -1;
+	private DataInputStream dataBuffer = null;
 	
 	public CommunicationHandler(Socket socket) {
 		this.socket = socket;
@@ -163,9 +164,9 @@ public class CommunicationHandler {
 	
 	private byte [] padMessage(byte [] array){
 		byte [] padded = array;
-		
+		//HERE BE CHANGE*************************
 		if (array.length % 8 != 0){
-			padded = new byte [array.length + (array.length % 8)];
+			padded = new byte [array.length + (8-(array.length % 8))];
 			for (int i = 0; i < array.length; i++){
 				padded[i] = array[i];
 			}
@@ -281,7 +282,49 @@ public class CommunicationHandler {
 		try{
 			socket.close();
 		} catch (Exception e){}
+		
+	}
+	
+	private long [] getRawEncryptedLength(int size, DataInputStream dis) throws IOException{
+		long [] read = new long [size];
+		for (int i = 0; i < size; i++){
+			read[i]=(dis.readLong());
 		}
+		return read;
+	}
+	
+	private long [] getRawLength(int size, DataInputStream dis) throws IOException{
+		long [] encrypted = getRawEncryptedLength(size, dis);
+		return decryptMsg(encrypted, this.ID);
+	}
+	
+	
+	
+	public CommunicationMessage popCommunicationMessage () throws ClassNotFoundException, IOException{
+			if (dataBuffer == null) {
+				dataBuffer = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
+			}
+			long [] firstTwo = getRawLength(2, dataBuffer);
+			long byteLen = firstTwo[0];
+			long paddedByteLen = byteLen + (8 - (byteLen % 8));
+			int longLen = (int)(paddedByteLen/8);
+			longLen += (longLen+1) % 2;
+			long [] fullMsg = new long [longLen];
+			fullMsg[0] = firstTwo[1];
+			
+			long [] otherPart = getRawLength(longLen-1, dataBuffer);
+			for (int i=0; i<otherPart.length; i++){
+				fullMsg[i+1] = otherPart[i];
+			}
+			//dis.close();
+			byte [] commObj = LongArraytoByteArray(fullMsg);
+			byte [] finalObj = Arrays.copyOf(commObj, (int)byteLen);;
+			return (CommunicationMessage)toObject(finalObj);
+		
+	}
+	
+	public void clearDataBuffer(){
+		dataBuffer = null;
 	}
 	
 }
