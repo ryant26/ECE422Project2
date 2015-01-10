@@ -8,3 +8,4 @@ This is my implementation of the 2nd (final) project in ECE 422 at Ualberta. It 
 * Realitively Secure, should only serve files from www dir
 * CommunicationHandler.java is a **MESS** there was a night-before-due-date fix to allow the sending of multiline files
 	* Original design could only send single lines ... who designed that ....
+* Not a good representation of good OOD or code for that matter, but good enough to reference if your own project is not working
